@@ -30,10 +30,6 @@ public class UserEntity implements UserDetails, Serializable {
     @Column(name="cpf", length=11, nullable = false, unique= true)
     private String cpf;
 
-//    @ManyToOne
-//    @JoinColumn(name ="role_name")
-//    private RolesEntity role;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "role_name", length = 60, nullable = false)
     private Role role;

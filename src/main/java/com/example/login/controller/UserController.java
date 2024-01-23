@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import response.LoginResponse;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -52,14 +53,26 @@ public class UserController {
 
     @PostMapping(path = "/login")
     public ResponseEntity<?> loginUser(@RequestBody LoginDto loginDto) {
-        LoginResponse loginResponse = teste.loginUser(loginDto);
-        return ResponseEntity.ok(loginResponse);
+        try {
+            if (loginDto.getEmail() == null || loginDto.getPassword() == null) {
+                return ResponseEntity.badRequest().body(new LoginResponse("Todos os campos devem ser preenchidos.", false));
+            }
+            LoginResponse loginResponse = teste.loginUser(loginDto);
+            return ResponseEntity.ok(loginResponse);
+        } catch (ServiceException e) {
+            return ResponseEntity.status(500).body(new LoginResponse("Erro durante o cadastro: " + e.getMessage(), false));
+        }
     }
-    @GetMapping(path = "/listar")
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<List<UserDto>> listUsers() {
-        List<UserDto> users = teste.getAllUsers();
-        return ResponseEntity.ok(users);
+    @GetMapping(path = "/list")
+    public ResponseEntity<?> listUsers(@RequestBody LoginDto loginDto) {
+        List<UserDto> listUsers = teste.findUsersByRole(loginDto);
+        if (listUsers == null) {
+            return ResponseEntity.status(500).body("Erro ao buscar usuários.");
+        } else if (listUsers.isEmpty()) {
+            return ResponseEntity.status(404).body("Nenhum usuário encontrado.");
+        } else {
+            return ResponseEntity.ok(listUsers);
+        }
     }
 
     @DeleteMapping("/deletar/{userId}")
