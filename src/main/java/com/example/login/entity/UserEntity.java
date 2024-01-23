@@ -18,20 +18,20 @@ public class UserEntity implements UserDetails, Serializable {
     @Column(name = "id")
     private int userId;
 
-    @Column(name="name", length=200, nullable = false, unique=true)
+    @Column(name="name", length=200, nullable = false, unique=true, columnDefinition = "TEXT")
     private String username;
 
-    @Column(name="email", length=200, nullable = false, unique= true)
+    @Column(name="email", length=200, nullable = false, unique= true, columnDefinition = "TEXT")
     private String email;
 
-    @Column(name="password", length=200, nullable = false)
+    @Column(name="password", length=200, nullable = false, columnDefinition = "TEXT")
     private String password;
 
-    @Column(name="cpf", length=11, nullable = false, unique= true)
+    @Column(name="cpf", length=11, nullable = false, unique= true, columnDefinition = "TEXT")
     private String cpf;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "role_name", length = 60, nullable = false)
+    @Column(name = "role_name", length = 60, nullable = false, columnDefinition = "TEXT")
     private Role role;
 
     public UserEntity(){
@@ -123,8 +123,6 @@ public class UserEntity implements UserDetails, Serializable {
         if (this.role != null) {
             authorities.add(new SimpleGrantedAuthority(this.role.toString()));
         }
-//            authorities.add(new SimpleGrantedAuthority(this.role.getAuthority()));
-//        }
 
         return authorities;
     }
