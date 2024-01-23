@@ -7,9 +7,11 @@ import com.example.login.repository.UserRepository;
 import com.example.login.service.UserService;
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
 import response.LoginResponse;
 
 import java.util.ArrayList;
@@ -99,13 +101,46 @@ public class ServiceTesteImpl implements UserService {
         return Collections.emptyList();
     }
 
+    public List<UserDto> listUsers() {
+        List<UserDto> listaDto = new ArrayList<>();
+        List<UserEntity> listaAll = userRepository.findAll();
+        if(listaAll!=null){
+        for (UserEntity userEntity : listaAll) {
+            if (userEntity.getRole().toString().equals("USER")) {
+                UserDto dto = populateDto(userEntity);
+                listaDto.add(dto);
+            }
+        }
+        return listaDto;
+    }
+        return Collections.emptyList();
+    }
+
+    @Override
+    public LoginResponse deleteUser(int userId) {
+//        int userIdInt = Integer.parseInt(userId);
+//        UserEntity userDel = userRepository.findByUserId(userId);
+        try{
+            Optional<UserEntity> userOptional = userRepository.findById(userId);
+            if (userOptional.isPresent()) {
+            UserEntity userDel = userOptional.get();
+            userRepository.delete(userDel);
+            return new LoginResponse("Sucesso ao deletar o usuário", true);
+        } else {
+            return new LoginResponse("Usuário não encontrado", false);
+        }
+    } catch (NumberFormatException ex) {
+        return new LoginResponse("Formato inválido para userId", false);
+    }
+}
+
+
     @Override
     public List<UserDto> getAllUsers() {
         return null;
     }
 
-    @Override
-    public void deleteUser(String userId) {
 
-    }
+
+
 }

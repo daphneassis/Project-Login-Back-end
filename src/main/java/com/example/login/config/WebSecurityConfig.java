@@ -34,10 +34,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic()
                 .and()
                 .authorizeHttpRequests()
-//                .antMatchers("/api/user/save", "/api/user/login").permitAll()
-//                .antMatchers(HttpMethod.GET, "/api/user/list").hasRole("USER")
-//                .antMatchers(HttpMethod.GET, "/api/user/listar").hasRole("USER")
-//                .antMatchers(HttpMethod.DELETE, "/api/user/deletar/{userId}").hasRole("ADMIN")
+                .antMatchers(HttpMethod.POST, "/api/user/save", "/api/user/login").permitAll()
+//                .antMatchers(HttpMethod.GET, "/api/user/listUsers").authenticated()
+//                .antMatchers(HttpMethod.GET, "/api/user/listUsers").hasRole("ADMIN")
+//                .antMatchers(HttpMethod.DELETE, "/api/user/delete/**").hasRole("ADMIN")
+
                 .anyRequest().authenticated()
                 .and()
                 .csrf().disable();

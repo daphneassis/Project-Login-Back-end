@@ -11,7 +11,7 @@ import java.util.List;
 
 @Entity
 @Table(name="users")
-public class UserEntity implements UserDetails, Serializable {
+public class UserEntity implements UserDetails, Serializable, GrantedAuthority {
     private  static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -118,6 +118,11 @@ public class UserEntity implements UserDetails, Serializable {
     }
 
     @Override
+    public String getAuthority() {
+        return this.role.toString();
+    }
+
+    @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
         if (this.role != null) {
@@ -138,4 +143,6 @@ public class UserEntity implements UserDetails, Serializable {
                 ", role='" + role + '\'' +
                 '}';
     }
+
+
 }

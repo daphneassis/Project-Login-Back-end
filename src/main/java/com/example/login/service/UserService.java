@@ -3,6 +3,7 @@ package com.example.login.service;
 import com.example.login.dto.LoginDto;
 import com.example.login.dto.UserDto;
 import com.example.login.entity.UserEntity;
+import org.springframework.http.ResponseEntity;
 import response.LoginResponse;
 
 import java.util.List;
@@ -19,5 +20,7 @@ public interface UserService {
 
     List<UserDto> getAllUsers();
 
-    void deleteUser(String userId);
+    List<UserDto> listUsers();
+
+    LoginResponse deleteUser(int userId);
 }

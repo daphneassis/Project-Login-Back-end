@@ -35,11 +35,11 @@ public class UserController {
             if (body != null) return body;
             LoginResponse response = teste.addUser(userDto);
             return ResponseEntity.ok(response);
-        } catch(ServiceException e) {
-        return ResponseEntity.status(500).body(new LoginResponse("Erro durante o cadastro: " + e.getMessage(), false));
-    }
+        } catch (ServiceException e) {
+            return ResponseEntity.status(500).body(new LoginResponse("Erro durante o cadastro: " + e.getMessage(), false));
+        }
 
-}
+    }
 
     private ResponseEntity<LoginResponse> validationUserDto(UserDto userDto) {
         if (userDto.getUsername() == null || userDto.getEmail() == null || userDto.getPassword() == null || userDto.getCpf() == null || userDto.getRole() == null) {
@@ -63,9 +63,12 @@ public class UserController {
             return ResponseEntity.status(500).body(new LoginResponse("Erro durante o cadastro: " + e.getMessage(), false));
         }
     }
-    @GetMapping(path = "/list")
-    public ResponseEntity<?> listUsers(@RequestBody LoginDto loginDto) {
-        List<UserDto> listUsers = teste.findUsersByRole(loginDto);
+
+
+    @GetMapping(path = "/listUsers")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> listUsers() {
+        List<UserDto> listUsers = teste.listUsers();
         if (listUsers == null) {
             return ResponseEntity.status(500).body("Erro ao buscar usuários.");
         } else if (listUsers.isEmpty()) {
@@ -74,17 +77,34 @@ public class UserController {
             return ResponseEntity.ok(listUsers);
         }
     }
+//
+//    @GetMapping(path = "/list")
+//    public ResponseEntity<?> listUsers(@RequestBody LoginDto loginDto) {
+//        List<UserDto> listUsers = teste.findUsersByRole(loginDto);
+//        if (listUsers == null) {
+//            return ResponseEntity.status(500).body("Erro ao buscar usuários.");
+//        } else if (listUsers.isEmpty()) {
+//            return ResponseEntity.status(404).body("Nenhum usuário encontrado.");
+//        } else {
+//            return ResponseEntity.ok(listUsers);
+//        }
+//    }
 
-    @DeleteMapping("/deletar/{userId}")
+    @DeleteMapping("/delete/{userId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<String> deleteUser(@PathVariable String userId) {
-        teste.deleteUser(userId);
-        return ResponseEntity.ok("Usuário excluído com sucesso!");
+    public ResponseEntity<LoginResponse> deleteUser(@PathVariable int userId) {
+        try {
+            LoginResponse response = teste.deleteUser(userId);
+            return ResponseEntity.ok(response);
+        } catch (ServiceException e) {
+            return ResponseEntity.status(500).body(new LoginResponse("Erro durante o cadastro: " + e.getMessage(), false));
+        }
     }
+}
 
 //    @Autowired
 //    private UserService userService;
-//
+
 //    @PostMapping(path = "/save")
 //    public String saveUser(@RequestBody UserDto userDto) {
 //        String id = userService.addUser(userDto);
@@ -109,5 +129,5 @@ public class UserController {
 //        return ResponseEntity.ok("Usuário excluído com sucesso!");
 //    }
 
-}
+
 
