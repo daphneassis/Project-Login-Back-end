@@ -24,7 +24,7 @@ public class UserEntity implements UserDetails, Serializable, GrantedAuthority {
     @Column(name="email", length=200, nullable = false, unique= true, columnDefinition = "TEXT")
     private String email;
 
-    @Column(name="password", length=200, nullable = false, columnDefinition = "TEXT")
+    @Column(name="password", length=200, nullable = false,  columnDefinition = "TEXT")
     private String password;
 
     @Column(name="cpf", length=11, nullable = false, unique= true, columnDefinition = "TEXT")
@@ -121,16 +121,33 @@ public class UserEntity implements UserDetails, Serializable, GrantedAuthority {
     public String getAuthority() {
         return this.role.toString();
     }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
         if (this.role != null) {
-            authorities.add(new SimpleGrantedAuthority(this.role.toString()));
+            String roleString = this.role.toString();
+
+            // Verifica se a role já está presente na lista
+            boolean authorized = authorities.stream().anyMatch(authority -> authority.getAuthority().equals(roleString));
+
+            // Adiciona a role se ainda não estiver presente
+            if (!authorized) {
+                authorities.add(new SimpleGrantedAuthority(roleString));
+            }
         }
 
         return authorities;
     }
+
+//    @Override
+//    public Collection<? extends GrantedAuthority> getAuthorities() {
+//        List<GrantedAuthority> authorities = new ArrayList<>();
+//        if (this.role != null) {
+//            authorities.add(new SimpleGrantedAuthority(this.role.toString()));
+//        }
+//
+//        return authorities;
+//    }
 
     @Override
     public String toString() {

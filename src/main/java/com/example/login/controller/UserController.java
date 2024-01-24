@@ -2,6 +2,7 @@
 package com.example.login.controller;
 
 import com.example.login.dto.LoginDto;
+import com.example.login.dto.PasswordDto;
 import com.example.login.dto.UserDto;
 import com.example.login.service.impl.ServiceTesteImpl;
 import org.apache.coyote.Response;
@@ -51,6 +52,8 @@ public class UserController {
         return null;
     }
 
+    //verificar se eu preciso alterar o login, inserir validação dos métodos de USER ou ADMIN antes do acesso
+    //aos outros métodos delete e listUsers
     @PostMapping(path = "/login")
     public ResponseEntity<?> loginUser(@RequestBody LoginDto loginDto) {
         try {
@@ -63,7 +66,18 @@ public class UserController {
             return ResponseEntity.status(500).body(new LoginResponse("Erro durante o cadastro: " + e.getMessage(), false));
         }
     }
-
+    @PutMapping(path = "/changepass")
+    public ResponseEntity<?> updateUserPassword(@RequestBody PasswordDto passDto) {
+        try {
+            if (passDto.getEmail() == null || passDto.getOldPass() == null|| passDto.getNewPass() == null) {
+                return ResponseEntity.badRequest().body(new LoginResponse("Os campos não podem ser nulos", false));
+            }
+            LoginResponse loginResponse = teste.updatePassword(passDto);
+            return ResponseEntity.ok(loginResponse);
+        } catch (ServiceException e) {
+            return ResponseEntity.status(500).body(new LoginResponse("Erro durante a atualização da senha: " + e.getMessage(), false));
+        }
+    }
 
     @GetMapping(path = "/listUsers")
     @PreAuthorize("hasRole('ADMIN')")
@@ -77,18 +91,6 @@ public class UserController {
             return ResponseEntity.ok(listUsers);
         }
     }
-//
-//    @GetMapping(path = "/list")
-//    public ResponseEntity<?> listUsers(@RequestBody LoginDto loginDto) {
-//        List<UserDto> listUsers = teste.findUsersByRole(loginDto);
-//        if (listUsers == null) {
-//            return ResponseEntity.status(500).body("Erro ao buscar usuários.");
-//        } else if (listUsers.isEmpty()) {
-//            return ResponseEntity.status(404).body("Nenhum usuário encontrado.");
-//        } else {
-//            return ResponseEntity.ok(listUsers);
-//        }
-//    }
 
     @DeleteMapping("/delete/{userId}")
     @PreAuthorize("hasRole('ADMIN')")
@@ -102,32 +104,6 @@ public class UserController {
     }
 }
 
-//    @Autowired
-//    private UserService userService;
-
-//    @PostMapping(path = "/save")
-//    public String saveUser(@RequestBody UserDto userDto) {
-//        String id = userService.addUser(userDto);
-//        return id;
-//    }
-//    @PostMapping(path = "/login")
-//    public ResponseEntity<?> loginUser(@RequestBody LoginDto loginDto) {
-//        LoginResponse loginResponse = userService.loginUser(loginDto);
-//        return ResponseEntity.ok(loginResponse);
-//    }
-//    @GetMapping(path = "/listar")
-//    @PreAuthorize("hasRole('USER')")
-//    public ResponseEntity<List<UserDto>> listUsers() {
-//        List<UserDto> users = userService.getAllUsers();
-//        return ResponseEntity.ok(users);
-//    }
-//
-//    @DeleteMapping("/deletar/{userId}")
-//    @PreAuthorize("hasRole('ADMIN')")
-//    public ResponseEntity<String> deleteUser(@PathVariable String userId) {
-//        userService.deleteUser(userId);
-//        return ResponseEntity.ok("Usuário excluído com sucesso!");
-//    }
 
 
 

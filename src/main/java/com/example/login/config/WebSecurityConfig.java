@@ -33,17 +33,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .httpBasic()
                 .and()
-                .authorizeHttpRequests()
+                .authorizeRequests()
+                .antMatchers(HttpMethod.PATCH, "http://localhost:8080/api/user/listUsers").hasRole("ADMIN")
                 .antMatchers(HttpMethod.POST, "/api/user/save", "/api/user/login").permitAll()
-//                .antMatchers(HttpMethod.GET, "/api/user/listUsers").authenticated()
+//                .antMatchers(HttpMethod.PUT, "/api/user/changepass").authenticated()
+                .antMatchers(HttpMethod.PUT, "/api/user/changepass").permitAll()
+
+
 //                .antMatchers(HttpMethod.GET, "/api/user/listUsers").hasRole("ADMIN")
 //                .antMatchers(HttpMethod.DELETE, "/api/user/delete/**").hasRole("ADMIN")
 
-                .anyRequest().authenticated()
                 .and()
-                .csrf().disable();
+                .csrf().disable()
+                .cors()
+            ;
 
     }
+
 
 
     @Override

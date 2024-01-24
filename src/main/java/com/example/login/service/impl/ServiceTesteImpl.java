@@ -1,5 +1,6 @@
 package com.example.login.service.impl;
 import com.example.login.dto.LoginDto;
+import com.example.login.dto.PasswordDto;
 import com.example.login.dto.UserDto;
 import com.example.login.entity.UserEntity;
 import com.example.login.enums.Role;
@@ -66,6 +67,23 @@ public class ServiceTesteImpl implements UserService {
         }
     }
 
+    @Override
+    public LoginResponse updatePassword(PasswordDto passDto){
+        UserEntity user = userRepository.findByEmail(passDto.getEmail());
+        if(user!=null){
+            String passDbEncoded = user.getPassword();
+            Boolean isPasswordCorrect = passwordEncoder.matches(passDto.getOldPass(), passDbEncoded);
+            if (isPasswordCorrect) {
+                    user.setPassword(passwordEncoder.encode(passDto.getNewPass()));
+                    return new LoginResponse("Sucesso ao salvar a nova senha!", true);
+                } else {
+                return new LoginResponse("A senha atual não confere", false);
+            }
+        } else {
+            return new LoginResponse("Usuário não encontrado", false);
+        }
+    }
+
     public boolean verifyAccess(LoginDto loginDto) {
         UserEntity user = userRepository.findByEmail(loginDto.getEmail());
         if (user.getRole().toString() == "ADMIN") {
@@ -118,8 +136,6 @@ public class ServiceTesteImpl implements UserService {
 
     @Override
     public LoginResponse deleteUser(int userId) {
-//        int userIdInt = Integer.parseInt(userId);
-//        UserEntity userDel = userRepository.findByUserId(userId);
         try{
             Optional<UserEntity> userOptional = userRepository.findById(userId);
             if (userOptional.isPresent()) {
