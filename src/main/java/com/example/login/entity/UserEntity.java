@@ -126,11 +126,7 @@ public class UserEntity implements UserDetails, Serializable, GrantedAuthority {
         List<GrantedAuthority> authorities = new ArrayList<>();
         if (this.role != null) {
             String roleString = this.role.toString();
-
-            // Verifica se a role já está presente na lista
             boolean authorized = authorities.stream().anyMatch(authority -> authority.getAuthority().equals(roleString));
-
-            // Adiciona a role se ainda não estiver presente
             if (!authorized) {
                 authorities.add(new SimpleGrantedAuthority(roleString));
             }
@@ -138,16 +134,6 @@ public class UserEntity implements UserDetails, Serializable, GrantedAuthority {
 
         return authorities;
     }
-
-//    @Override
-//    public Collection<? extends GrantedAuthority> getAuthorities() {
-//        List<GrantedAuthority> authorities = new ArrayList<>();
-//        if (this.role != null) {
-//            authorities.add(new SimpleGrantedAuthority(this.role.toString()));
-//        }
-//
-//        return authorities;
-//    }
 
     @Override
     public String toString() {

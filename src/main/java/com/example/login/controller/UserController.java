@@ -1,20 +1,16 @@
 
 package com.example.login.controller;
-
 import com.example.login.dto.LoginDto;
 import com.example.login.dto.PasswordDto;
 import com.example.login.dto.UserDto;
 import com.example.login.service.impl.ServiceTesteImpl;
-import org.apache.coyote.Response;
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import response.LoginResponse;
-
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -52,8 +48,6 @@ public class UserController {
         return null;
     }
 
-    //verificar se eu preciso alterar o login, inserir validação dos métodos de USER ou ADMIN antes do acesso
-    //aos outros métodos delete e listUsers
     @PostMapping(path = "/login")
     public ResponseEntity<?> loginUser(@RequestBody LoginDto loginDto) {
         try {
@@ -69,7 +63,7 @@ public class UserController {
     @PutMapping(path = "/changepass")
     public ResponseEntity<?> updateUserPassword(@RequestBody PasswordDto passDto) {
         try {
-            if (passDto.getEmail() == null || passDto.getOldPass() == null|| passDto.getNewPass() == null) {
+            if (passDto.getEmail() == null || passDto.getOldPass() == null || passDto.getNewPass() == null) {
                 return ResponseEntity.badRequest().body(new LoginResponse("Os campos não podem ser nulos", false));
             }
             LoginResponse loginResponse = teste.updatePassword(passDto);
